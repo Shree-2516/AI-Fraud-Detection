@@ -1,0 +1,19 @@
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Data and model files
+data/
+models/
+
+# Bytecode and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# OS / IDE
+.DS_Store
+*.log
