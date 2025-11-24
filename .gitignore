@@ -6,6 +6,9 @@ venv/
 # Data and model files
 data/
 models/
+*.csv
+*.joblib
+*.h5
 
 # Bytecode and caches
 __pycache__/

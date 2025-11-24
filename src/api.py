@@ -1,9 +1,10 @@
 # src/api.py
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 import joblib
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from typing import Optional, Dict, Any, Tuple
 
 # -----------------------------------------------------------
 # Configuration
@@ -21,25 +22,42 @@ FEATURES = ['amount_log', 'hour', 'Amount']
 app = Flask(__name__)
 
 # Load scaler and model safely
+scaler: Optional[Any] = None
+model: Optional[Any] = None
+
 try:
-    scaler = joblib.load(SCALER_PATH)
-    model = joblib.load(MODEL_PATH)
-    print("✅ Models loaded successfully")
-except FileNotFoundError as e:
-    print("❌ Model files not found:", e)
-    scaler = None
-    model = None
+    if SCALER_PATH.exists():
+        scaler = joblib.load(SCALER_PATH)
+    if MODEL_PATH.exists():
+        model = joblib.load(MODEL_PATH)
+    
+    if scaler and model:
+        print("✅ Models loaded successfully")
+    else:
+        print("⚠️ Models not found or failed to load")
+except Exception as e:
+    print(f"❌ Error loading models: {e}")
 
 # -----------------------------------------------------------
 # Routes
 # -----------------------------------------------------------
 @app.route('/', methods=['GET'])
-def home():
-    return jsonify({"message": "✅ Fraud Detection API is running"})
+def home() -> Tuple[Response, int]:
+    """Health check endpoint."""
+    return jsonify({"message": "✅ Fraud Detection API is running"}), 200
 
 
 @app.route('/predict', methods=['POST'])
-def predict():
+def predict() -> Tuple[Response, int]:
+    """
+    Predict fraud probability for a transaction.
+    Expected JSON input:
+    {
+        "amount_log": float,
+        "hour": int,
+        "Amount": float
+    }
+    """
     # Check if model is loaded
     if scaler is None or model is None:
         return jsonify({"error": "Model files not found. Please run preprocessing and training first."}), 500
@@ -64,13 +82,14 @@ def predict():
             "fraud_probability": float(proba),
             "fraud_flag": bool(proba > 0.5)
         }
-        return jsonify(result)
+        return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
 
 @app.route('/favicon.ico')
-def favicon():
+def favicon() -> Tuple[str, int]:
+    """Handle favicon request."""
     return '', 204
 
 

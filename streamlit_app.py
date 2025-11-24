@@ -2,6 +2,7 @@
 import streamlit as st
 import requests
 import math
+import os
 
 st.set_page_config(page_title="AI Fraud Detection Dashboard", layout="centered")
 
@@ -31,7 +32,8 @@ st.write("### Input JSON:", data)
 # Predict button
 if st.button("🔍 Predict Fraud"):
     try:
-        resp = requests.post("http://127.0.0.1:5000/predict", json=data)
+        api_url = os.getenv("API_URL", "http://127.0.0.1:5000")
+        resp = requests.post(f"{api_url}/predict", json=data)
         if resp.status_code == 200:
             result = resp.json()
             prob = result["fraud_probability"]
