@@ -9,7 +9,7 @@ Built with Python, Flask, XGBoost, SMOTE, and Streamlit.
 - Model training (Random Forest, XGBoost)
 - Real-time fraud prediction with Flask API
 - Interactive Streamlit dashboard for users
-- Explainability using SHAP
+- Explainability using SHAP 
 
 ## 🧠 Tech Stack
 `Python`, `Flask`, `Streamlit`, `Scikit-learn`, `XGBoost`, `SHAP`, `SMOTE`
